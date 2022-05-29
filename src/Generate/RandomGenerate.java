@@ -13,7 +13,6 @@ public class RandomGenerate {
 			digits[i] = (char) (random.nextInt(10) + '0');
 		}
 		return Long.parseLong(new String(digits));
-
 	}
 
 	public String RandomGenerateIdTransaction() {
@@ -33,5 +32,4 @@ public class RandomGenerate {
 			sb.append(chars.charAt(rnd.nextInt(chars.length())));
 		return sb.toString();
 	}
-
 }

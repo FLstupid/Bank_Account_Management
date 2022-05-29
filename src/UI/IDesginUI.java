@@ -1,10 +1,7 @@
 package UI;
 
-import java.io.IOException;
-
 import model.Account;
 import model.Customer;
-import model.Login;
 
 public interface IDesginUI {
 	

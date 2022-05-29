@@ -1,6 +1,5 @@
 package DAO;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -53,6 +52,7 @@ public class TransactionDetailDAO implements DAO<TransactionDetail> {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<TransactionDetail> getAllByTransaction(int id){
 //		List<TransactionDetail> list = new ArrayList<>();
 //		Transaction transaction = null;
@@ -84,6 +84,7 @@ public class TransactionDetailDAO implements DAO<TransactionDetail> {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<TransactionDetail> getAllByAccount(Account account){
 		
 		try {

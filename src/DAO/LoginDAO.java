@@ -107,8 +107,6 @@ public class LoginDAO implements DAO<Login> {
 			if(list != null && !list.isEmpty()) {
 				login2 = list.get(0);
 			}
-				
-			
 			transaction.commit();
 		} catch (Exception e) {
 			// TODO: handle exception

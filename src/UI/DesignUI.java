@@ -1,13 +1,10 @@
 package UI;
 
-import java.io.Console;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.SimpleFormatter;
 
 import Command.Balance;
 import Command.Command;
@@ -20,7 +17,6 @@ import DAO.LoginDAO;
 import DAO.TransactionDAO;
 import DAO.TransactionDetailDAO;
 import Generate.RandomGenerate;
-import Strategy.Calculator;
 import Strategy.Router;
 import Strategy.SubNumber;
 import Strategy.SumNumber;
@@ -45,18 +41,17 @@ public class DesignUI implements IDesginUI {
 		int options = scanner.nextInt();
 
 		while (options < 0 || options > 3) {
-
 			System.out.println("Vui long chon lai!");
 			options = scanner.nextInt();
-
 		}
 		if (options == 1)
 			initLoginUI();
-		if (options == 2)
+		else if (options == 2)
 			initSignupUI();
-		if (options == 3)
+		else {
+			
 			System.exit(0);
-
+		}
 	}
 
 	@Override
@@ -83,18 +78,19 @@ public class DesignUI implements IDesginUI {
 //			System.out.println("\n");
 //		}
 
-		if (dao.checkLoginSuccess(new Login(username, password)) == null) {
+		if (dao.checkLoginSuccess(new Login(username, Integer.toString(password.hashCode()))) == null) {
 			System.out.println("Username hoac Password khong dung, vui long nhap lai");
 			initLoginUI();
 		} else {
 			CustomerDAO customerDAO = new CustomerDAO();
-			int cid = dao.checkLoginSuccess(new Login(username, password)).getCustomer().getIdCustomer();
+			int cid = dao.checkLoginSuccess(new Login(username, Integer.toString(password.hashCode()))).getCustomer().getIdCustomer();
 			Customer customer = customerDAO.get(cid);
 			initListAccountUI(customer);
 		}
 
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void initSignupUI() {
 		// TODO Auto-generated method stub
@@ -133,7 +129,7 @@ public class DesignUI implements IDesginUI {
 
 		System.out.print("Ngay sinh (khong bat buoc) (Vi du: 01/01/2001, mm/dd/yyyy):  ");
 		String ngaysinh = scanner.nextLine();
-		Date dob = new Date();
+		Date dob = null;
 		if (!ngaysinh.isEmpty())
 			dob = new Date(ngaysinh);
 
@@ -158,10 +154,12 @@ public class DesignUI implements IDesginUI {
 
 			}
 		}
-
+		System.out.print("Pass: ");
+		String pass = scanner.nextLine();
 		Customer customer = new Customer.CustomerBuilder(name, phone, cmnd).setAddress(address).setDob(dob)
 				.setEmail(email).setGender(gender).build();
-		Login login = new Login(phone, new RandomGenerate().RandomGeneratePassword(), customer);
+		//Login login = new Login(phone, new RandomGenerate().RandomGeneratePassword(), customer);
+		Login login = new Login(phone,Integer.toString(pass.hashCode()),customer);
 		long number = new RandomGenerate().RandomGenerateLongNumber();
 		while (accountDAO.checkAccountExist(number))
 			number = new RandomGenerate().RandomGenerateLongNumber();
@@ -176,8 +174,8 @@ public class DesignUI implements IDesginUI {
 
 	public void initListAccountUI(Customer customer) {
 		Scanner scanner = new Scanner(System.in);
-		LoginDAO loginDAO = new LoginDAO();
-		CustomerDAO customerDAO = new CustomerDAO();
+		//LoginDAO loginDAO = new LoginDAO();
+		//CustomerDAO customerDAO = new CustomerDAO();
 		AccountDAO accountDAO = new AccountDAO();
 		Account account = new Account();
 
@@ -202,7 +200,7 @@ public class DesignUI implements IDesginUI {
 				break;
 			}
 		}
-
+		
 		initMainUI(account, customer);
 	}
 
@@ -268,6 +266,7 @@ public class DesignUI implements IDesginUI {
 			break;
 		}
 		case 10: {
+			scanner.close();
 			System.exit(0);
 		}
 		default:
@@ -280,8 +279,8 @@ public class DesignUI implements IDesginUI {
 	private void RutTien(Account account) {
 		// TODO Auto-generated method stub
 
-		System.out.print("Vui long nhap so tien muon rut: ");
 		Scanner scanner = new Scanner(System.in);
+		System.out.print("Vui long nhap so tien muon rut: ");
 		String money = scanner.nextLine();
 
 		if (!money.isEmpty()) {
@@ -289,8 +288,7 @@ public class DesignUI implements IDesginUI {
 				System.out.println("So tien khong hop le, vui long nhap lai");
 				money = scanner.nextLine();
 			}
-		} else
-			return;
+		}
 
 		long delta = Long.parseLong(money);
 
@@ -323,14 +321,14 @@ public class DesignUI implements IDesginUI {
 			transactionDAO.save(transaction);
 			transactionDetailDAO.save(transactionDetail);
 		}
-
+		
 	}
 
 	@Override
 	public void initTransactionHistoryUI(Account account, Customer customer) {
 		// TODO Auto-generated method stub
 		TransactionDetailDAO transactionDetailDAO = new TransactionDetailDAO();
-		TransactionDAO transactionDAO = new TransactionDAO();
+		//TransactionDAO transactionDAO = new TransactionDAO();
 		List<TransactionDetail> listByAccount = new ArrayList<>();
 		listByAccount = transactionDetailDAO.getAllByAccount(account);
 		List<TransactionDetail> listByTransaction = new ArrayList<>();
@@ -436,6 +434,7 @@ public class DesignUI implements IDesginUI {
 		Scanner scanner = new Scanner(System.in);
 		String quaylai = scanner.nextLine();
 		quaylai = quaylai.toUpperCase().trim();
+		
 		if (quaylai.equals("Y"))
 			initMainUI(account, customer);
 		else if (quaylai.equals("N"))
@@ -508,6 +507,7 @@ public class DesignUI implements IDesginUI {
 			destTransactionDetail.setLastBalance(destLastBalance);
 			transactionDetailDAO.save(destTransactionDetail);
 			transactionDetailDAO.save(srcTransactionDetail);
+			
 			initMainUI(account, customer);
 		}
 	}
@@ -549,6 +549,7 @@ public class DesignUI implements IDesginUI {
 					} else
 						System.out.println("Vui long nhap lai");
 				} else {
+					
 //					initMainUI(account, customer);
 					break;
 				}
@@ -577,6 +578,7 @@ public class DesignUI implements IDesginUI {
 					} else
 						System.out.println("Vui long nhap lai");
 				} else {
+					
 //					initMainUI(account, customer);
 					break;
 				}
@@ -635,9 +637,11 @@ public class DesignUI implements IDesginUI {
 			customer.setEmailCustomer(email);
 
 			customerDAO.update(customer);
+			
 			initCheckInformationUI(account, customer);
 
 		} else {
+			
 			initMainUI(account, customer);
 		}
 	}
@@ -654,8 +658,7 @@ public class DesignUI implements IDesginUI {
 				System.out.println("So tien khong hop le, vui long nhap lai");
 				money = scanner.nextLine();
 			}
-		} else
-			return;
+		}
 
 		long delta = Long.parseLong(money);
 
@@ -682,7 +685,7 @@ public class DesignUI implements IDesginUI {
 		accountDAO.update(account);
 		transactionDAO.save(transaction);
 		transactionDetailDAO.save(transactionDetail);
-
+		
 //		initMainUI(account, customer);
 
 	}

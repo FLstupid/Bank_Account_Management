@@ -59,6 +59,7 @@ public class TransactionDAO implements DAO<Transaction> {
 		return transaction;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Transaction> getAll() {
 		// TODO Auto-generated method stub
@@ -79,6 +80,7 @@ public class TransactionDAO implements DAO<Transaction> {
 		try (Session session = HibernateUtil.getSessionFactory().openSession()){
 			transaction2=session.beginTransaction();
 			
+			@SuppressWarnings("unchecked")
 			List<Transaction> list = session.createQuery("FROM Transaction WHERE idTransactionReal = ?1")
 					.setParameter(1, id).getResultList();
 			if(list!=null && !list.isEmpty())
